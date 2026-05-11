@@ -1,1033 +1,582 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Market Systems Investment Tracker</title>
-
-  <!-- PWA -->
-  <meta name="theme-color" content="#0f172a"/>
-  <link rel="manifest" href="data:application/manifest+json,{
-    &quot;name&quot;:&quot;Market Systems Investment Tracker&quot;,
-    &quot;short_name&quot;:&quot;MS Tracker&quot;,
-    &quot;display&quot;:&quot;standalone&quot;,
-    &quot;background_color&quot;:&quot;#0f172a&quot;,
-    &quot;theme_color&quot;:&quot;#0f172a&quot;,
-    &quot;start_url&quot;:&quot;.&quot;
-  }">
-
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Charts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
-
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Market Systems • Investment Tracker</title>
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Market%20Systems%20Tracker%22%2C%22short_name%22%3A%22MSTracker%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%233b82f6%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Crect%20width%3D'100'%20height%3D'100'%20rx%3D'20'%20fill%3D'%230f172a'%2F%3E%3Ctext%20x%3D'50'%20y%3D'65'%20font-size%3D'50'%20text-anchor%3D'middle'%20fill%3D'%233b82f6'%20font-family%3D'sans-serif'%3E▲%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22100x100%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
   <style>
-    *{
-      font-family: 'Inter', sans-serif;
-      -webkit-tap-highlight-color: transparent;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-
-    body{
-      background: #020617;
-      color: white;
-      overflow-x: hidden;
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
     }
-
-    .glass{
-      background: rgba(255,255,255,0.05);
+    body.light {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      background: inherit;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 0 40px rgba(0,0,0,0.4);
+      background: #0f172a;
+      transition: background 0.3s;
+    }
+    body.light .app-container {
+      background: #ffffff;
+      box-shadow: 0 0 30px rgba(0,0,0,0.05);
+    }
+    .page {
+      display: none;
+      padding: 1.25rem 1rem 5rem;
+      flex: 1;
+      animation: fade 0.2s ease;
+    }
+    .page.active {
+      display: block;
+    }
+    @keyframes fade { from { opacity: 0.5; } to { opacity: 1; } }
+    
+    header {
+      padding: 1rem 1rem 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: inherit;
+    }
+    h1, h2, h3 {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.5rem;
+      padding: 1.25rem;
+      box-shadow: 0 10px 25px -8px rgba(0,0,0,0.3);
+      transition: all 0.2s;
     }
-
-    .card{
-      border-radius: 24px;
-      background: linear-gradient(
-        180deg,
-        rgba(255,255,255,0.06),
-        rgba(255,255,255,0.03)
-      );
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow:
-      0 10px 30px rgba(0,0,0,0.25);
+    body.light .glass-card {
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
     }
-
-    .gradient-text{
-      background: linear-gradient(to right,#60a5fa,#34d399);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    button {
+      background: #3b82f6;
+      border: none;
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 2.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
     }
-
-    .nav-btn.active{
-      color: #60a5fa;
+    button.secondary {
+      background: rgba(255,255,255,0.1);
+      color: #e2e8f0;
     }
-
-    .fab{
-      position: fixed;
-      bottom: 90px;
-      right: 22px;
-      width: 62px;
-      height: 62px;
-      border-radius: 50%;
-      background: linear-gradient(135deg,#3b82f6,#10b981);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size: 22px;
-      box-shadow: 0 10px 30px rgba(59,130,246,0.4);
-      z-index: 999;
-      transition: .25s;
+    body.light button.secondary {
+      background: #f1f5f9;
+      color: #0f172a;
     }
-
-    .fab:active{
-      transform: scale(.95);
+    input, select, textarea {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 1rem;
+      padding: 0.9rem 1rem;
+      color: white;
+      width: 100%;
+      margin: 0.4rem 0 1rem;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
     }
-
-    .bottom-nav{
+    body.light input, body.light select, body.light textarea {
+      background: #f1f5f9;
+      border-color: #e2e8f0;
+      color: #0f172a;
+    }
+    input:focus, select:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
+    }
+    .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
-      width: 100%;
-      height: 74px;
-      background: rgba(15,23,42,.85);
+      right: 0;
+      max-width: 480px;
+      margin: 0 auto;
+      background: rgba(15,23,42,0.85);
       backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255,255,255,.06);
-      z-index: 998;
+      display: flex;
+      justify-content: space-around;
+      padding: 0.7rem 0.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      z-index: 20;
     }
-
-    .page{
-      display:none;
-      animation: fade .3s ease;
+    body.light .bottom-nav {
+      background: rgba(255,255,255,0.9);
+      border-top: 1px solid #e2e8f0;
     }
-
-    .page.active{
-      display:block;
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      transition: 0.2s;
+      background: none;
+      border: none;
+      padding: 0.3rem;
     }
-
-    @keyframes fade{
-      from{
-        opacity:0;
-        transform: translateY(10px);
-      }
-      to{
-        opacity:1;
-        transform: translateY(0);
-      }
+    .nav-item.active {
+      color: #3b82f6;
+      font-weight: 600;
     }
-
-    .toast{
+    .fab {
       position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 14px 18px;
-      background: #10b981;
-      border-radius: 16px;
-      z-index: 9999;
-      display:none;
-      font-weight:600;
-      box-shadow:0 10px 25px rgba(0,0,0,.25);
+      bottom: 80px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: #3b82f6;
+      box-shadow: 0 10px 25px #3b82f680;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      z-index: 25;
+      cursor: pointer;
+      transition: 0.2s;
     }
-
-    input,select,textarea{
-      background: rgba(255,255,255,.05)!important;
-      border:1px solid rgba(255,255,255,.08)!important;
-      color:white!important;
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin: 1rem 0;
     }
-
-    input::placeholder,
-    textarea::placeholder{
-      color:#94a3b8;
+    .timeline-item {
+      border-left: 2px solid #3b82f6;
+      padding-left: 1.25rem;
+      margin-bottom: 1.5rem;
+      position: relative;
     }
-
-    .timeline-line{
-      position:absolute;
-      left: 14px;
-      top: 0;
-      bottom:0;
-      width:2px;
-      background: rgba(255,255,255,.1);
+    .timeline-item::before {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: #3b82f6;
+      border-radius: 10px;
+      position: absolute;
+      left: -6px;
+      top: 4px;
     }
-
-    .timeline-dot{
-      width: 14px;
-      height: 14px;
-      background:#3b82f6;
-      border-radius:50%;
-      position:absolute;
-      left:8px;
-      top:10px;
-      box-shadow:0 0 15px #3b82f6;
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 20px;
+      right: 20px;
+      background: #1e293b;
+      color: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      z-index: 50;
+      display: none;
     }
-
-    .light-mode{
-      background:#f8fafc!important;
-      color:#0f172a!important;
-    }
-
-    .light-mode .card,
-    .light-mode .glass{
-      background: rgba(255,255,255,.85)!important;
-      color:#0f172a!important;
-      border:1px solid rgba(15,23,42,.08)!important;
-    }
-
-    .light-mode input,
-    .light-mode select,
-    .light-mode textarea{
-      color:#0f172a!important;
-      background:#fff!important;
-    }
-
-    .light-mode .bottom-nav{
-      background: rgba(255,255,255,.92);
-    }
-
-    .light-mode .nav-btn{
-      color:#334155;
-    }
-
   </style>
 </head>
+<body class="dark">
+<div class="app-container" id="appContainer">
+  <header>
+    <h2 style="font-weight:700;">📊 Market Systems</h2>
+    <button id="themeToggle" style="padding:0.5rem 1rem;" class="secondary">🌓</button>
+  </header>
 
-<body class="pb-28">
-
-<div id="toast" class="toast"></div>
-
-<!-- FAB -->
-<button class="fab" onclick="openQuickAdd()">
-  <i class="fa-solid fa-plus"></i>
-</button>
-
-<!-- APP -->
-<div class="max-w-md mx-auto px-4 py-5">
-
-  <!-- HEADER -->
-  <div class="flex justify-between items-center mb-6">
-    <div>
-      <h1 class="text-2xl font-extrabold gradient-text">
-        Market Systems
-      </h1>
-      <p class="text-slate-400 text-sm">
-        Founder Investment Tracker
-      </p>
+  <!-- Dashboard -->
+  <div id="dashboardPage" class="page active">
+    <div class="metric-grid">
+      <div class="glass-card"><small>Total Expenses</small><h3 id="totalExpenses">$0</h3></div>
+      <div class="glass-card"><small>Revenue</small><h3 id="totalRevenue">$0</h3></div>
+      <div class="glass-card"><small>Net Profit</small><h3 id="netProfit">$0</h3></div>
+      <div class="glass-card"><small>Break-even</small><h3 id="breakEven">0%</h3></div>
     </div>
-
-    <button onclick="toggleTheme()" class="glass p-3 rounded-2xl">
-      <i class="fa-solid fa-moon"></i>
-    </button>
+    <div class="glass-card" style="margin:1rem 0;">
+      <h4>📈 Spending Trend</h4>
+      <canvas id="trendChart" width="300" height="120" style="width:100%; height:auto;"></canvas>
+    </div>
+    <div class="glass-card">
+      <h4>🧠 Smart Insights</h4>
+      <p id="insightText">Loading insights...</p>
+    </div>
   </div>
 
-  <!-- DASHBOARD -->
-  <section id="dashboard" class="page active">
+  <!-- Add Expense -->
+  <div id="expensePage" class="page">
+    <h3>Add Expense</h3>
+    <input id="expName" placeholder="Expense name" />
+    <input id="expAmount" type="number" placeholder="Amount" step="0.01" />
+    <select id="expCategory"></select>
+    <input id="expDate" type="date" />
+    <input id="expNotes" placeholder="Notes" />
+    <button id="saveExpenseBtn" style="width:100%;">Save Expense</button>
+  </div>
 
-    <div class="grid grid-cols-2 gap-4">
+  <!-- Transactions -->
+  <div id="transactionsPage" class="page">
+    <h3>Transactions</h3>
+    <input id="searchTx" placeholder="Search..." style="margin-bottom:1rem;" />
+    <div id="transactionList"></div>
+  </div>
 
-      <div class="card p-4">
-        <p class="text-slate-400 text-sm">Expenses</p>
-        <h2 id="totalExpenses" class="text-2xl font-bold mt-2">$0</h2>
-      </div>
+  <!-- Statistics -->
+  <div id="statsPage" class="page">
+    <h3>Statistics</h3>
+    <div class="glass-card"><canvas id="categoryChart" width="200" height="200"></canvas></div>
+    <div class="glass-card" style="margin-top:1rem;"><p id="avgMonthly"></p><p id="biggestExpense"></p></div>
+  </div>
 
-      <div class="card p-4">
-        <p class="text-slate-400 text-sm">Revenue</p>
-        <h2 id="totalRevenue" class="text-2xl font-bold mt-2 text-green-400">$0</h2>
-      </div>
+  <!-- Revenue -->
+  <div id="revenuePage" class="page">
+    <h3>Add Revenue</h3>
+    <input id="revName" placeholder="Revenue name" />
+    <input id="revAmount" type="number" placeholder="Amount" step="0.01" />
+    <input id="revClient" placeholder="Client" />
+    <input id="revDate" type="date" />
+    <button id="saveRevenueBtn" style="width:100%;">Save Revenue</button>
+  </div>
 
-      <div class="card p-4">
-        <p class="text-slate-400 text-sm">Profit/Loss</p>
-        <h2 id="profitLoss" class="text-2xl font-bold mt-2">$0</h2>
-      </div>
+  <!-- Timeline -->
+  <div id="timelinePage" class="page">
+    <h3>Founder Journey</h3>
+    <div id="timelineContainer"></div>
+  </div>
 
-      <div class="card p-4">
-        <p class="text-slate-400 text-sm">Transactions</p>
-        <h2 id="transactionCount" class="text-2xl font-bold mt-2">0</h2>
-      </div>
+  <!-- Settings -->
+  <div id="settingsPage" class="page">
+    <h3>Settings</h3>
+    <button id="exportCSV" class="secondary" style="width:100%;margin:0.5rem 0;">Export CSV</button>
+    <button id="backupData" class="secondary" style="width:100%;margin:0.5rem 0;">Backup (JSON)</button>
+    <input type="file" id="restoreInput" accept=".json" style="display:none;" />
+    <button id="restoreBtn" class="secondary" style="width:100%;">Restore Backup</button>
+    <button id="resetData" style="background:#b91c1c; width:100%; margin-top:1rem;">Reset All Data</button>
+  </div>
 
-    </div>
-
-    <!-- CHART -->
-    <div class="card p-4 mt-5">
-      <div class="flex justify-between mb-4">
-        <h3 class="font-bold">Monthly Spending</h3>
-      </div>
-
-      <canvas id="spendingChart" height="180"></canvas>
-    </div>
-
-    <!-- INSIGHTS -->
-    <div class="mt-5">
-      <h3 class="font-bold text-lg mb-3">Founder Insights</h3>
-
-      <div id="insightsContainer" class="space-y-3"></div>
-    </div>
-
-    <!-- RECENT -->
-    <div class="mt-5">
-      <h3 class="font-bold text-lg mb-3">Recent Activity</h3>
-
-      <div id="recentTransactions" class="space-y-3"></div>
-    </div>
-
-  </section>
-
-  <!-- ADD EXPENSE -->
-  <section id="addExpense" class="page">
-
-    <div class="card p-5">
-
-      <h2 class="text-xl font-bold mb-5">
-        Add Expense
-      </h2>
-
-      <div class="space-y-4">
-
-        <input id="expenseName"
-          class="w-full p-4 rounded-2xl"
-          placeholder="Expense Name">
-
-        <input id="expenseAmount"
-          type="number"
-          class="w-full p-4 rounded-2xl"
-          placeholder="Amount">
-
-        <select id="expenseCategory"
-          class="w-full p-4 rounded-2xl">
-        </select>
-
-        <input id="expenseMethod"
-          class="w-full p-4 rounded-2xl"
-          placeholder="Payment Method">
-
-        <input id="expenseDate"
-          type="date"
-          class="w-full p-4 rounded-2xl">
-
-        <textarea id="expenseNotes"
-          rows="4"
-          class="w-full p-4 rounded-2xl"
-          placeholder="Notes"></textarea>
-
-        <button onclick="saveExpense()"
-          class="w-full p-4 rounded-2xl bg-blue-500 font-bold">
-          Save Expense
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- TRANSACTIONS -->
-  <section id="transactions" class="page">
-
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold">Transactions</h2>
-    </div>
-
-    <input
-      id="searchInput"
-      oninput="renderTransactions()"
-      class="w-full p-4 rounded-2xl mb-4"
-      placeholder="Search transactions...">
-
-    <div id="transactionsList" class="space-y-3"></div>
-
-  </section>
-
-  <!-- REVENUE -->
-  <section id="revenue" class="page">
-
-    <div class="card p-5">
-
-      <h2 class="text-xl font-bold mb-5">
-        Add Revenue
-      </h2>
-
-      <div class="space-y-4">
-
-        <input id="revenueName"
-          class="w-full p-4 rounded-2xl"
-          placeholder="Revenue Name">
-
-        <input id="revenueAmount"
-          type="number"
-          class="w-full p-4 rounded-2xl"
-          placeholder="Amount">
-
-        <input id="revenueClient"
-          class="w-full p-4 rounded-2xl"
-          placeholder="Client">
-
-        <input id="revenueDate"
-          type="date"
-          class="w-full p-4 rounded-2xl">
-
-        <textarea id="revenueNotes"
-          rows="4"
-          class="w-full p-4 rounded-2xl"
-          placeholder="Notes"></textarea>
-
-        <button onclick="saveRevenue()"
-          class="w-full p-4 rounded-2xl bg-green-500 font-bold">
-          Save Revenue
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- TIMELINE -->
-  <section id="timeline" class="page">
-
-    <h2 class="text-xl font-bold mb-5">
-      Founder Journey Timeline
-    </h2>
-
-    <div id="timelineContainer" class="relative pl-10 space-y-5">
-      <div class="timeline-line"></div>
-    </div>
-
-  </section>
-
-  <!-- SETTINGS -->
-  <section id="settings" class="page">
-
-    <div class="space-y-4">
-
-      <div class="card p-5">
-        <h3 class="font-bold mb-3">Theme</h3>
-
-        <button onclick="toggleTheme()"
-          class="w-full p-4 rounded-2xl bg-slate-700">
-          Toggle Dark / Light
-        </button>
-      </div>
-
-      <div class="card p-5">
-        <h3 class="font-bold mb-3">Export Data</h3>
-
-        <button onclick="exportData()"
-          class="w-full p-4 rounded-2xl bg-blue-500">
-          Export Backup JSON
-        </button>
-      </div>
-
-      <div class="card p-5">
-        <h3 class="font-bold mb-3">Reset App</h3>
-
-        <button onclick="resetData()"
-          class="w-full p-4 rounded-2xl bg-red-500">
-          Reset All Data
-        </button>
-      </div>
-
-    </div>
-
-  </section>
-
+  <div class="bottom-nav">
+    <button class="nav-item active" data-page="dashboard">📊 Home</button>
+    <button class="nav-item" data-page="expense">➕ Add</button>
+    <button class="nav-item" data-page="transactions">💳 Tx</button>
+    <button class="nav-item" data-page="stats">📈 Stats</button>
+    <button class="nav-item" data-page="timeline">⏳ Journey</button>
+  </div>
+  <div class="fab" id="fabAdd">+</div>
 </div>
-
-<!-- NAV -->
-<div class="bottom-nav flex justify-around items-center">
-
-  <button class="nav-btn active flex flex-col items-center"
-    onclick="switchPage('dashboard',this)">
-    <i class="fa-solid fa-chart-line text-lg"></i>
-    <span class="text-xs mt-1">Home</span>
-  </button>
-
-  <button class="nav-btn flex flex-col items-center"
-    onclick="switchPage('transactions',this)">
-    <i class="fa-solid fa-wallet text-lg"></i>
-    <span class="text-xs mt-1">Transactions</span>
-  </button>
-
-  <button class="nav-btn flex flex-col items-center"
-    onclick="switchPage('addExpense',this)">
-    <i class="fa-solid fa-plus text-lg"></i>
-    <span class="text-xs mt-1">Expense</span>
-  </button>
-
-  <button class="nav-btn flex flex-col items-center"
-    onclick="switchPage('revenue',this)">
-    <i class="fa-solid fa-money-bill-trend-up text-lg"></i>
-    <span class="text-xs mt-1">Revenue</span>
-  </button>
-
-  <button class="nav-btn flex flex-col items-center"
-    onclick="switchPage('timeline',this)">
-    <i class="fa-solid fa-clock-rotate-left text-lg"></i>
-    <span class="text-xs mt-1">Timeline</span>
-  </button>
-
-  <button class="nav-btn flex flex-col items-center"
-    onclick="switchPage('settings',this)">
-    <i class="fa-solid fa-gear text-lg"></i>
-    <span class="text-xs mt-1">Settings</span>
-  </button>
-
-</div>
+<div class="toast" id="toast"></div>
 
 <script>
-
-const defaultCategories = [
-  "Laptop & Hardware",
-  "AI Subscriptions",
-  "Claude",
-  "ChatGPT",
-  "Cursor",
-  "Kimi",
-  "Hosting",
-  "Domains",
-  "Internet",
-  "Learning Courses",
-  "Marketing",
-  "Transportation",
-  "Team",
-  "Miscellaneous"
-];
-
-let expenses = JSON.parse(localStorage.getItem("expenses")) || [
-  {
-    id:1,
-    name:"MacBook Pro",
-    amount:2200,
-    category:"Laptop & Hardware",
-    method:"Visa",
-    date:"2026-05-01",
-    notes:"Main development machine"
-  },
-  {
-    id:2,
-    name:"Claude Subscription",
-    amount:20,
-    category:"Claude",
-    method:"Card",
-    date:"2026-05-02",
-    notes:"AI coding assistant"
-  },
-  {
-    id:3,
-    name:"Cursor AI",
-    amount:20,
-    category:"Cursor",
-    method:"Card",
-    date:"2026-05-03",
-    notes:"Development IDE"
-  }
-];
-
-let revenues = JSON.parse(localStorage.getItem("revenues")) || [
-  {
-    id:1,
-    name:"First Client Payment",
-    amount:1500,
-    client:"Startup Client",
-    date:"2026-05-04",
-    notes:"MVP development"
-  }
-];
-
-function saveStorage(){
-  localStorage.setItem("expenses",JSON.stringify(expenses));
-  localStorage.setItem("revenues",JSON.stringify(revenues));
-}
-
-function switchPage(id,btn){
-
-  document.querySelectorAll(".page").forEach(p=>{
-    p.classList.remove("active");
-  });
-
-  document.getElementById(id).classList.add("active");
-
-  document.querySelectorAll(".nav-btn").forEach(b=>{
-    b.classList.remove("active");
-  });
-
-  btn.classList.add("active");
-}
-
-function populateCategories(){
-
-  const select = document.getElementById("expenseCategory");
-
-  select.innerHTML = "";
-
-  defaultCategories.forEach(cat=>{
-    select.innerHTML += `
-      <option value="${cat}">
-        ${cat}
-      </option>
-    `;
-  });
-}
-
-function saveExpense(){
-
-  const name = expenseName.value.trim();
-  const amount = Number(expenseAmount.value);
-  const category = expenseCategory.value;
-  const method = expenseMethod.value;
-  const date = expenseDate.value;
-  const notes = expenseNotes.value;
-
-  if(!name || !amount){
-    showToast("Please fill required fields");
-    return;
-  }
-
-  expenses.unshift({
-    id:Date.now(),
-    name,
-    amount,
-    category,
-    method,
-    date,
-    notes
-  });
-
-  saveStorage();
-
-  renderAll();
-
-  expenseName.value="";
-  expenseAmount.value="";
-  expenseMethod.value="";
-  expenseDate.value="";
-  expenseNotes.value="";
-
-  showToast("Expense Added");
-}
-
-function saveRevenue(){
-
-  const name = revenueName.value.trim();
-  const amount = Number(revenueAmount.value);
-  const client = revenueClient.value;
-  const date = revenueDate.value;
-  const notes = revenueNotes.value;
-
-  if(!name || !amount){
-    showToast("Please fill required fields");
-    return;
-  }
-
-  revenues.unshift({
-    id:Date.now(),
-    name,
-    amount,
-    client,
-    date,
-    notes
-  });
-
-  saveStorage();
-
-  renderAll();
-
-  revenueName.value="";
-  revenueAmount.value="";
-  revenueClient.value="";
-  revenueDate.value="";
-  revenueNotes.value="";
-
-  showToast("Revenue Added");
-}
-
-function renderDashboard(){
-
-  const totalExpensesValue = expenses.reduce((a,b)=>a+b.amount,0);
-
-  const totalRevenueValue = revenues.reduce((a,b)=>a+b.amount,0);
-
-  const profit = totalRevenueValue-totalExpensesValue;
-
-  totalExpenses.innerText = "$"+totalExpensesValue.toLocaleString();
-
-  totalRevenue.innerText = "$"+totalRevenueValue.toLocaleString();
-
-  profitLoss.innerText = "$"+profit.toLocaleString();
-
-  transactionCount.innerText =
-    expenses.length + revenues.length;
-
-  renderInsights();
-  renderRecent();
-  renderChart();
-}
-
-function renderInsights(){
-
-  const totalExpensesValue =
-    expenses.reduce((a,b)=>a+b.amount,0);
-
-  const topCategory = getTopCategory();
-
-  const monthlyBurn =
-    Math.round(totalExpensesValue / 12);
-
-  insightsContainer.innerHTML = `
-  
-    <div class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center">
-          <i class="fa-solid fa-brain text-blue-400"></i>
-        </div>
-
-        <div>
-          <h4 class="font-semibold">
-            ${topCategory} is your largest investment category.
-          </h4>
-          <p class="text-slate-400 text-sm">
-            Focused founder spending detected.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="card p-4">
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-green-500/20 flex items-center justify-center">
-          <i class="fa-solid fa-chart-line text-green-400"></i>
-        </div>
-
-        <div>
-          <h4 class="font-semibold">
-            Estimated monthly burn rate: $${monthlyBurn}
-          </h4>
-          <p class="text-slate-400 text-sm">
-            Keep building consistently.
-          </p>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function getTopCategory(){
-
-  const map = {};
-
-  expenses.forEach(e=>{
-    map[e.category]=(map[e.category]||0)+e.amount;
-  });
-
-  return Object.keys(map).sort((a,b)=>map[b]-map[a])[0];
-}
-
-function renderRecent(){
-
-  recentTransactions.innerHTML="";
-
-  expenses.slice(0,5).forEach(e=>{
-
-    recentTransactions.innerHTML += `
-      <div class="card p-4 flex justify-between items-center">
-
-        <div>
-          <h4 class="font-semibold">${e.name}</h4>
-          <p class="text-slate-400 text-sm">${e.category}</p>
-        </div>
-
-        <div class="text-right">
-          <h4 class="font-bold text-red-400">
-            -$${e.amount}
-          </h4>
-
-          <p class="text-slate-400 text-xs">
-            ${e.date}
-          </p>
-        </div>
-
-      </div>
-    `;
-  });
-}
-
-function renderTransactions(){
-
-  const search =
-    searchInput.value.toLowerCase();
-
-  transactionsList.innerHTML="";
-
-  expenses
-  .filter(e=>e.name.toLowerCase().includes(search))
-  .forEach(e=>{
-
-    transactionsList.innerHTML += `
-    
-      <div class="card p-4">
-
-        <div class="flex justify-between">
-
-          <div>
-            <h3 class="font-semibold">
-              ${e.name}
-            </h3>
-
-            <p class="text-slate-400 text-sm">
-              ${e.category}
-            </p>
-          </div>
-
-          <div class="text-right">
-
-            <h3 class="font-bold text-red-400">
-              -$${e.amount}
-            </h3>
-
-            <p class="text-slate-400 text-xs">
-              ${e.date}
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-    `;
-  });
-}
-
-function renderTimeline(){
-
-  timelineContainer.innerHTML =
-    `<div class="timeline-line"></div>`;
-
-  const events = [
-    ...expenses.map(e=>({
-      title:e.name,
-      date:e.date,
-      type:"expense"
-    })),
-    ...revenues.map(r=>({
-      title:r.name,
-      date:r.date,
-      type:"revenue"
-    }))
-  ];
-
-  events.sort((a,b)=>
-    new Date(a.date)-new Date(b.date)
-  );
-
-  events.forEach(event=>{
-
-    timelineContainer.innerHTML += `
-    
-      <div class="relative">
-
-        <div class="timeline-dot"></div>
-
-        <div class="card p-4 ml-4">
-
-          <div class="flex justify-between items-center">
-
-            <div>
-              <h3 class="font-semibold">
-                ${event.title}
-              </h3>
-
-              <p class="text-slate-400 text-sm">
-                ${event.type}
-              </p>
-            </div>
-
-            <p class="text-slate-400 text-sm">
-              ${event.date}
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-    `;
-  });
-}
-
-let chart;
-
-function renderChart(){
-
-  const ctx =
-    document.getElementById("spendingChart");
-
-  const monthly = [120,300,220,500,200,350];
-
-  if(chart){
-    chart.destroy();
-  }
-
-  chart = new Chart(ctx,{
-    type:'line',
-    data:{
-      labels:[
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun'
-      ],
-      datasets:[{
-        label:'Spending',
-        data:monthly,
-        tension:.4,
-        borderColor:'#3b82f6',
-        fill:true,
-        backgroundColor:'rgba(59,130,246,.1)'
-      }]
-    },
-    options:{
-      plugins:{
-        legend:{
-          labels:{
-            color:'#94a3b8'
-          }
-        }
-      },
-      scales:{
-        x:{
-          ticks:{ color:'#94a3b8' }
-        },
-        y:{
-          ticks:{ color:'#94a3b8' }
-        }
+  (function() {
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('data:application/javascript,self.addEventListener(%22fetch%22,e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})');
+      });
+    }
+
+    // Storage keys
+    const EXPENSES_KEY = 'ms_expenses';
+    const REVENUES_KEY = 'ms_revenues';
+    const CATEGORIES_KEY = 'ms_categories';
+    const TIMELINE_KEY = 'ms_timeline';
+
+    // Default categories
+    const defaultCategories = [
+      'Laptop & Hardware', 'AI Subscriptions', 'Claude', 'ChatGPT', 'Cursor', 'Kimi',
+      'Hosting', 'Domains', 'Internet', 'Learning Courses', 'Marketing', 'Team', 'Transportation', 'Miscellaneous'
+    ];
+
+    // Sample data
+    function seedSampleData() {
+      if (!localStorage.getItem(EXPENSES_KEY)) {
+        const expenses = [
+          { id: '1', name: 'MacBook Pro', amount: 2400, category: 'Laptop & Hardware', date: '2025-01-10', notes: 'Development machine' },
+          { id: '2', name: 'Claude Pro', amount: 20, category: 'Claude', date: '2025-02-01', notes: 'Monthly' },
+          { id: '3', name: 'Cursor Pro', amount: 20, category: 'Cursor', date: '2025-02-05', notes: 'IDE' },
+          { id: '4', name: 'Domain market-systems.com', amount: 12, category: 'Domains', date: '2025-02-10', notes: '' },
+          { id: '5', name: 'Vercel Hosting', amount: 20, category: 'Hosting', date: '2025-03-01', notes: 'Pro plan' }
+        ];
+        localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
+      }
+      if (!localStorage.getItem(REVENUES_KEY)) {
+        const revenues = [
+          { id: 'r1', name: 'First Client Project', amount: 1500, client: 'StartupX', date: '2025-03-15', notes: 'MVP build' }
+        ];
+        localStorage.setItem(REVENUES_KEY, JSON.stringify(revenues));
+      }
+      if (!localStorage.getItem(CATEGORIES_KEY)) {
+        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(defaultCategories));
+      }
+      if (!localStorage.getItem(TIMELINE_KEY)) {
+        const timeline = [
+          { id:'t1', date:'2025-01-10', text:'Bought first laptop' },
+          { id:'t2', date:'2025-02-01', text:'First Claude subscription' },
+          { id:'t3', date:'2025-02-05', text:'First Cursor subscription' },
+          { id:'t4', date:'2025-02-10', text:'Purchased domain' },
+          { id:'t5', date:'2025-03-15', text:'First client revenue' }
+        ];
+        localStorage.setItem(TIMELINE_KEY, JSON.stringify(timeline));
       }
     }
-  });
-}
+    seedSampleData();
 
-function toggleTheme(){
+    // Data service
+    const getExpenses = () => JSON.parse(localStorage.getItem(EXPENSES_KEY) || '[]');
+    const getRevenues = () => JSON.parse(localStorage.getItem(REVENUES_KEY) || '[]');
+    const getCategories = () => JSON.parse(localStorage.getItem(CATEGORIES_KEY) || '[]');
+    const getTimeline = () => JSON.parse(localStorage.getItem(TIMELINE_KEY) || '[]');
 
-  document.body.classList.toggle("light-mode");
+    // UI Elements
+    const pages = document.querySelectorAll('.page');
+    const navItems = document.querySelectorAll('.nav-item');
+    const fab = document.getElementById('fabAdd');
+    const toast = document.getElementById('toast');
 
-  localStorage.setItem(
-    "theme",
-    document.body.classList.contains("light-mode")
-  );
-}
+    function showToast(msg) {
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
 
-function loadTheme(){
+    function switchPage(pageId) {
+      pages.forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId+'Page').classList.add('active');
+      navItems.forEach(n => n.classList.remove('active'));
+      document.querySelector(`[data-page="${pageId}"]`)?.classList.add('active');
+      if (pageId === 'dashboard') refreshDashboard();
+      if (pageId === 'transactions') renderTransactions();
+      if (pageId === 'stats') renderStats();
+      if (pageId === 'timeline') renderTimeline();
+      if (pageId === 'expense') populateCategorySelect();
+    }
 
-  const theme =
-    localStorage.getItem("theme");
+    navItems.forEach(btn => btn.addEventListener('click', (e) => switchPage(e.target.dataset.page)));
+    fab.addEventListener('click', () => switchPage('expense'));
 
-  if(theme==="true"){
-    document.body.classList.add("light-mode");
-  }
-}
-
-function exportData(){
-
-  const data = {
-    expenses,
-    revenues
-  };
-
-  const blob = new Blob(
-    [JSON.stringify(data,null,2)],
-    {type:"application/json"}
-  );
-
-  const a = document.createElement("a");
-
-  a.href = URL.createObjectURL(blob);
-
-  a.download =
-    "market-systems-backup.json";
-
-  a.click();
-
-  showToast("Backup Exported");
-}
-
-function resetData(){
-
-  if(confirm("Reset all data?")){
-
-    expenses = [];
-    revenues = [];
-
-    saveStorage();
-
-    renderAll();
-
-    showToast("Data Reset");
-  }
-}
-
-function showToast(message){
-
-  const toast =
-    document.getElementById("toast");
-
-  toast.innerText = message;
-
-  toast.style.display = "block";
-
-  setTimeout(()=>{
-    toast.style.display="none";
-  },2500);
-}
-
-function openQuickAdd(){
-
-  switchPage(
-    'addExpense',
-    document.querySelectorAll('.nav-btn')[2]
-  );
-}
-
-function renderAll(){
-
-  renderDashboard();
-
-  renderTransactions();
-
-  renderTimeline();
-}
-
-populateCategories();
-loadTheme();
-renderAll();
-
-if('serviceWorker' in navigator){
-
-  const sw = `
-  
-    self.addEventListener('install',e=>{
-      self.skipWaiting();
+    // Theme
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light');
     });
 
-    self.addEventListener('fetch',e=>{});
-  
-  `;
+    // Populate category select
+    function populateCategorySelect() {
+      const select = document.getElementById('expCategory');
+      if (!select) return;
+      select.innerHTML = '';
+      getCategories().forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat; opt.textContent = cat;
+        select.appendChild(opt);
+      });
+    }
 
-  const blob = new Blob([sw],{
-    type:'application/javascript'
-  });
+    // Save expense
+    document.getElementById('saveExpenseBtn')?.addEventListener('click', () => {
+      const name = document.getElementById('expName').value.trim();
+      const amount = parseFloat(document.getElementById('expAmount').value);
+      const category = document.getElementById('expCategory').value;
+      const date = document.getElementById('expDate').value || new Date().toISOString().split('T')[0];
+      if (!name || isNaN(amount)) return showToast('Fill required fields');
+      const expenses = getExpenses();
+      expenses.push({ id: Date.now().toString(), name, amount, category, date, notes: document.getElementById('expNotes').value });
+      localStorage.setItem(EXPENSES_KEY, JSON.stringify(expenses));
+      document.getElementById('expName').value = '';
+      document.getElementById('expAmount').value = '';
+      showToast('Expense saved');
+      switchPage('dashboard');
+    });
 
-  const swURL =
-    URL.createObjectURL(blob);
+    document.getElementById('saveRevenueBtn')?.addEventListener('click', () => {
+      const name = document.getElementById('revName').value.trim();
+      const amount = parseFloat(document.getElementById('revAmount').value);
+      if (!name || isNaN(amount)) return showToast('Fill fields');
+      const revenues = getRevenues();
+      revenues.push({ id: Date.now().toString(), name, amount, client: document.getElementById('revClient').value, date: document.getElementById('revDate').value || new Date().toISOString().split('T')[0], notes: '' });
+      localStorage.setItem(REVENUES_KEY, JSON.stringify(revenues));
+      showToast('Revenue added');
+      switchPage('dashboard');
+    });
 
-  navigator.serviceWorker.register(swURL);
-}
+    function refreshDashboard() {
+      const expenses = getExpenses();
+      const revenues = getRevenues();
+      const totalExp = expenses.reduce((s, e) => s + e.amount, 0);
+      const totalRev = revenues.reduce((s, r) => s + r.amount, 0);
+      document.getElementById('totalExpenses').innerText = '$'+totalExp.toFixed(0);
+      document.getElementById('totalRevenue').innerText = '$'+totalRev.toFixed(0);
+      document.getElementById('netProfit').innerText = '$'+(totalRev - totalExp).toFixed(0);
+      const breakEven = totalRev >= totalExp ? 100 : ((totalRev / totalExp)*100).toFixed(0);
+      document.getElementById('breakEven').innerText = breakEven + '%';
+      drawTrendChart(expenses);
+      generateInsights(expenses, totalExp);
+    }
 
+    function drawTrendChart(expenses) {
+      const canvas = document.getElementById('trendChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      const monthly = {};
+      expenses.forEach(e => {
+        const m = e.date.substring(0,7);
+        monthly[m] = (monthly[m]||0) + e.amount;
+      });
+      const values = Object.values(monthly);
+      if (values.length===0) return;
+      const max = Math.max(...values);
+      const width = canvas.width, height = canvas.height;
+      ctx.beginPath();
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2;
+      values.forEach((v,i) => {
+        const x = (i/(values.length-1))*width;
+        const y = height - (v/max)*height;
+        if(i===0) ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+    }
+
+    function generateInsights(expenses, total) {
+      const catTotals = {};
+      expenses.forEach(e => { catTotals[e.category] = (catTotals[e.category]||0)+e.amount; });
+      const topCat = Object.entries(catTotals).sort((a,b)=>b[1]-a[1])[0];
+      document.getElementById('insightText').innerText = topCat ? `📌 ${topCat[0]} is your largest category ($${topCat[1].toFixed(0)}).` : 'Start adding expenses.';
+    }
+
+    function renderTransactions() {
+      const list = document.getElementById('transactionList');
+      const expenses = getExpenses();
+      const search = document.getElementById('searchTx')?.value.toLowerCase() || '';
+      const filtered = expenses.filter(e => e.name.toLowerCase().includes(search) || e.category.toLowerCase().includes(search));
+      list.innerHTML = filtered.map(e => `
+        <div class="glass-card" style="margin-bottom:0.7rem; display:flex; justify-content:space-between;">
+          <div><strong>${e.name}</strong><br><small>${e.category} · ${e.date}</small></div>
+          <div style="color:#3b82f6;">$${e.amount}</div>
+        </div>
+      `).join('') || '<p>No transactions</p>';
+    }
+    document.getElementById('searchTx')?.addEventListener('input', renderTransactions);
+
+    function renderStats() {
+      const expenses = getExpenses();
+      const total = expenses.reduce((s,e)=>s+e.amount,0);
+      const months = [...new Set(expenses.map(e=>e.date.substring(0,7)))].length || 1;
+      document.getElementById('avgMonthly').innerText = `Avg monthly: $${(total/months).toFixed(0)}`;
+      const maxExp = expenses.sort((a,b)=>b.amount-a.amount)[0];
+      document.getElementById('biggestExpense').innerText = maxExp ? `Biggest: ${maxExp.name} $${maxExp.amount}` : '';
+      drawCategoryChart(expenses);
+    }
+
+    function drawCategoryChart(expenses) {
+      const canvas = document.getElementById('categoryChart');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const catMap = {};
+      expenses.forEach(e => { catMap[e.category] = (catMap[e.category]||0)+e.amount; });
+      const total = Object.values(catMap).reduce((a,b)=>a+b,0);
+      let start = 0;
+      const colors = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6'];
+      Object.entries(catMap).forEach(([cat,val],i) => {
+        ctx.fillStyle = colors[i%colors.length];
+        ctx.beginPath();
+        ctx.moveTo(100,100);
+        const angle = (val/total)*Math.PI*2;
+        ctx.arc(100,100,80,start,start+angle);
+        ctx.fill();
+        start += angle;
+      });
+    }
+
+    function renderTimeline() {
+      const container = document.getElementById('timelineContainer');
+      const timeline = getTimeline().sort((a,b)=>new Date(a.date)-new Date(b.date));
+      container.innerHTML = timeline.map(t => `
+        <div class="timeline-item"><small>${t.date}</small><p>${t.text}</p></div>
+      `).join('');
+    }
+
+    // Export CSV
+    document.getElementById('exportCSV')?.addEventListener('click', () => {
+      const expenses = getExpenses();
+      const csv = 'Name,Amount,Category,Date\n' + expenses.map(e=>`${e.name},${e.amount},${e.category},${e.date}`).join('\n');
+      const blob = new Blob([csv],{type:'text/csv'});
+      const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='expenses.csv'; a.click();
+    });
+
+    document.getElementById('backupData')?.addEventListener('click', () => {
+      const data = { expenses: getExpenses(), revenues: getRevenues(), categories: getCategories(), timeline: getTimeline() };
+      const blob = new Blob([JSON.stringify(data)],{type:'application/json'});
+      const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='ms_backup.json'; a.click();
+    });
+
+    document.getElementById('restoreBtn')?.addEventListener('click', () => document.getElementById('restoreInput').click());
+    document.getElementById('restoreInput')?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          localStorage.setItem(EXPENSES_KEY, JSON.stringify(data.expenses||[]));
+          localStorage.setItem(REVENUES_KEY, JSON.stringify(data.revenues||[]));
+          localStorage.setItem(CATEGORIES_KEY, JSON.stringify(data.categories||defaultCategories));
+          localStorage.setItem(TIMELINE_KEY, JSON.stringify(data.timeline||[]));
+          showToast('Backup restored');
+          switchPage('dashboard');
+        } catch(e) { showToast('Invalid file'); }
+      };
+      reader.readAsText(file);
+    });
+
+    document.getElementById('resetData')?.addEventListener('click', () => {
+      if(confirm('Delete all data?')) {
+        localStorage.clear();
+        seedSampleData();
+        showToast('Data reset');
+        switchPage('dashboard');
+      }
+    });
+
+    // Initial load
+    refreshDashboard();
+    populateCategorySelect();
+  })();
 </script>
-
 </body>
-  </html>
+</html>
