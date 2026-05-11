@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="متتبع استثمارات Market Systems - تتبع رحلة بناء شركتك التقنية">
+  <title>Market Systems | Investment Tracker</title>
+
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk1hcmtldCBTeXN0ZW1zIC0g2YXYs9iq2LHZiiIsCiAgInNob3J0X25hbWUiOiAiTVMgVHJhY2tlciIsCiAgInRoZW1lX2NvbG9yIjogIiMwQTBBNEIiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMwQTBBNEIiLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NyZWN0IHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJyByeD0nMjAnIGZpbGw9JyMzQjgyRjYnLyUzRSUzQ3RleHQgeD0nNTAnIHk9JzY1JyBmb250LXNpemU9JzQ1JyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZScgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnICUzRU0lM0MvdGV4dCUzRSUzQy9zdmclM0UiLAogICAgICAic2l6ZXMiOiAiMTAweDEwMCIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+      background: #0A0A0B;
+      color: #E5E7EB;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+      user-select: none;
+      min-height: 100vh;
+      direction: rtl;
+    }
+    
+    body.light-mode {
+      background: #FAFAFA;
+      color: #171717;
+    }
+    
+    #app-root {
+      min-height: 100vh;
+      padding-bottom: 120px;
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    .fixed-header {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 10, 11, 0.97);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 14px 20px 12px;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    body.light-mode .fixed-header {
+      background: rgba(250, 250, 250, 0.97);
+      border-bottom-color: rgba(0, 0, 0, 0.08);
+    }
+    
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .header-brand {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .header-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+      line-height: 1.2;
+    }
+    
+    body.light-mode .header-title {
+      color: #0A0A0B;
+    }
+    
+    .header-subtitle {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: #3B82F6;
+    }
+    
+    .header-page-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      opacity: 0.5;
+      color: #9CA3AF;
+      text-align: left;
+      direction: ltr;
+    }
+    
+    body.light-mode .header-page-label {
+      color: #6B7280;
+    }
+    
+    .page {
+      display: none;
+      padding: 12px 20px 20px;
+      animation: fadeIn 0.25s ease;
+    }
+    
+    .page.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .card {
+      background: #121214;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 4px 20px -2px rgba(0,0,0,0.3);
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    body.light-mode .card {
+      background: #FFFFFF;
+      border-color: #E5E7EB;
+      box-shadow: 0 4px 20px -2px rgba(0,0,0,0.04);
+    }
+    
+    .glass {
+      background: rgba(24,24,27,0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+    
+    body.light-mode .glass {
+      background: rgba(255,255,255,0.8);
+      border-color: rgba(0,0,0,0.05);
+    }
+    
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+    }
+    
+    h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .en-term {
+      font-size: 0.6rem;
+      font-weight: 500;
+      color: #6B7280;
+      font-style: italic;
+      letter-spacing: 0.03em;
+      direction: ltr;
+      display: inline-block;
+      margin-right: 4px;
+    }
+    
+    body.light-mode .en-term {
+      color: #9CA3AF;
+    }
+    
+    button {
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-family: inherit;
+    }
+    
+    button:active {
+      transform: scale(0.97);
+    }
+    
+    .btn-primary {
+      background: #3B82F6;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 1rem;
+      width: 100%;
+    }
+    
+    .btn-ghost {
+      background: rgba(255,255,255,0.05);
+      color: #E5E7EB;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      justify-content: flex-start;
+      font-size: 0.9rem;
+    }
+    
+    body.light-mode .btn-ghost {
+      background: #F3F4F6;
+      color: #1F2937;
+    }
+    
+    .btn-danger {
+      color: #EF4444;
+      font-weight: 700;
+    }
+    
+    input, select, textarea {
+      background: #1A1A1C;
+      border: 1px solid #27272A;
+      border-radius: 14px;
+      padding: 13px 16px;
+      width: 100%;
+      color: white;
+      font-size: 0.9rem;
+      outline: none;
+      margin-bottom: 10px;
+      font-family: inherit;
+      text-align: right;
+    }
+    
+    body.light-mode input, body.light-mode select, body.light-mode textarea {
+      background: #F9FAFB;
+      border-color: #E5E7EB;
+      color: #1F2937;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    }
+    
+    input[type="number"] {
+      direction: ltr;
+      text-align: right;
+    }
+    
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 500px;
+      margin: auto;
+      background: rgba(10,10,11,0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 4px 8px;
+      z-index: 100;
+    }
+    
+    body.light-mode .bottom-nav {
+      background: rgba(255,255,255,0.96);
+      border-top-color: #E5E7EB;
+    }
+    
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.6rem;
+      color: #71717A;
+      background: none;
+      padding: 6px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    
+    .nav-btn.active {
+      color: #3B82F6;
+      font-weight: 800;
+      background: rgba(59,130,246,0.08);
+    }
+    
+    .nav-icon {
+      font-size: 1.1rem;
+    }
+    
+    .fab {
+      position: fixed;
+      bottom: 90px;
+      left: 16px;
+      width: 52px;
+      height: 52px;
+      background: #3B82F6;
+      border-radius: 26px;
+      box-shadow: 0 8px 24px rgba(59,130,246,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 90;
+      color: white;
+      font-size: 26px;
+      border: none;
+    }
+    
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    
+    .metric-label {
+      font-size: 0.68rem;
+      opacity: 0.7;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .metric-value {
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+    
+    .text-success { color: #10B981; }
+    .text-danger { color: #EF4444; }
+    .text-accent { color: #3B82F6; }
+    
+    .toast {
+      position: fixed;
+      bottom: 105px;
+      left: 20px;
+      right: 20px;
+      background: #18181B;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      z-index: 200;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      animation: slideUp 0.3s ease;
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .insight-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+    
+    .timeline-line {
+      position: relative;
+      border-right: 2px solid rgba(59,130,246,0.25);
+      margin-right: 12px;
+      padding-right: 0;
+    }
+    
+    .timeline-item {
+      position: relative;
+      padding-right: 26px;
+      margin-bottom: 18px;
+    }
+    
+    .timeline-dot {
+      width: 11px;
+      height: 11px;
+      background: #3B82F6;
+      border-radius: 50%;
+      position: absolute;
+      right: -6.5px;
+      top: 6px;
+      box-shadow: 0 0 12px #3B82F6;
+    }
+    
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 150;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    
+    .modal-content {
+      background: #121214;
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    }
+    
+    .tx-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 50px 0;
+      opacity: 0.5;
+    }
+    
+    .empty-state-icon {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+    }
+    
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 170px;
+      padding-top: 16px;
+      direction: ltr;
+    }
+    
+    .bar-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    
+    .bar {
+      width: 100%;
+      max-width: 32px;
+      background: linear-gradient(180deg, #3B82F6, #2563EB);
+      border-radius: 7px 7px 0 0;
+      min-height: 4px;
+      transition: height 0.4s ease;
+    }
+    
+    .bar-label {
+      font-size: 0.58rem;
+      margin-top: 5px;
+      opacity: 0.7;
+      text-align: center;
+    }
+    
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      justify-content: center;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.68rem;
+      background: rgba(255,255,255,0.03);
+      padding: 4px 9px;
+      border-radius: 16px;
+    }
+    
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+    }
+    
+    /* شعار SST */
+    .sst-logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    
+    .sst-logo-text {
+      font-family: 'Cairo', 'Arial', sans-serif;
+      font-weight: 900;
+      font-size: 2.2rem;
+      letter-spacing: 4px;
+      color: #1E293B;
+      line-height: 1;
+    }
+    
+    body.light-mode .sst-logo-text {
+      color: #1E293B;
+    }
+    
+    body .sst-logo-text {
+      color: #E2E8F0;
+    }
+    
+    .sst-logo-sub {
+      font-family: 'Cairo', 'Arial', sans-serif;
+      font-weight: 600;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: #475569;
+      direction: ltr;
+    }
+    
+    body.light-mode .sst-logo-sub {
+      color: #64748B;
+    }
+    
+    body .sst-logo-sub {
+      color: #94A3B8;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app-root"></div>
+
+<script>
+// ========== DATA LAYER (LocalStorage) ==========
+const STORAGE_KEY = 'ms_transactions_v2';
+const SETTINGS_KEY = 'ms_settings_v2';
+
+const DEFAULT_CATEGORIES = [
+  'لابتوب وهاردوير',
+  'AI Subscriptions',
+  'Claude',
+  'ChatGPT',
+  'Cursor',
+  'Kimi',
+  'Hosting',
+  'Domains',
+  'إنترنت',
+  'كورسات تعليمية',
+  'Marketing',
+  'فريق عمل',
+  'مواصلات',
+  'متنوعات'
+];
+
+const DEMO_DATA = [
+  { id: 'demo1', type: 'expense', name: 'لابتوب MacBook Pro M3', amount: 105000, category: 'لابتوب وهاردوير', date: '2024-01-15', paymentMethod: 'فيزا', notes: 'جهاز التطوير الرئيسي' },
+  { id: 'demo2', type: 'expense', name: 'Claude Pro', amount: 950, category: 'AI Subscriptions', date: '2024-02-01', paymentMethod: 'فيزا', notes: 'شهري' },
+  { id: 'demo3', type: 'expense', name: 'Cursor Pro', amount: 900, category: 'AI Subscriptions', date: '2024-02-01', paymentMethod: 'فيزا', notes: 'بيئة التطوير' },
+  { id: 'demo4', type: 'expense', name: 'Domain market-sys.io', amount: 550, category: 'Domains', date: '2024-02-10', paymentMethod: 'فيزا', notes: 'سنة كاملة' },
+  { id: 'demo5', type: 'expense', name: 'Vercel Hosting', amount: 950, category: 'Hosting', date: '2024-03-01', paymentMethod: 'فيزا', notes: 'شهري' },
+  { id: 'demo6', type: 'expense', name: 'ChatGPT Plus', amount: 950, category: 'AI Subscriptions', date: '2024-04-01', paymentMethod: 'فيزا', notes: 'شهري' },
+  { id: 'demo7', type: 'expense', name: 'إنترنت فايبر WE', amount: 600, category: 'إنترنت', date: '2024-05-01', paymentMethod: 'تحويل بنكي', notes: 'شهري' },
+  { id: 'demo8', type: 'expense', name: 'كورس React متقدم', amount: 3500, category: 'كورسات تعليمية', date: '2024-03-15', paymentMethod: 'تحويل بنكي', notes: 'Udemy' },
+  { id: 'demo9', type: 'expense', name: 'شاشة خارجية 4K', amount: 8500, category: 'لابتوب وهاردوير', date: '2024-06-01', paymentMethod: 'فيزا', notes: 'Dell 27"' },
+  { id: 'demo10', type: 'expense', name: 'Facebook Ads', amount: 2000, category: 'Marketing', date: '2024-07-01', paymentMethod: 'فيزا', notes: 'حملة تجريبية' },
+  { id: 'demo11', type: 'revenue', name: 'أول مشروع - MVP', amount: 25000, client: 'شركة أكيومن', date: '2024-04-20', notes: 'تطوير' },
+  { id: 'demo12', type: 'revenue', name: 'SaaS Subscription', amount: 5000, client: 'TechStart مصر', date: '2024-06-15', notes: 'MRR' },
+  { id: 'demo13', type: 'revenue', name: 'استشارة تقنية', amount: 8000, client: 'StartupX', date: '2024-08-01', notes: 'جلسة استشارية' },
+  { id: 'demo14', type: 'expense', name: 'كيبورد ميكانيكال', amount: 2800, category: 'لابتوب وهاردوير', date: '2024-08-10', paymentMethod: 'كاش', notes: 'Keychron' },
+];
+
+function getTransactions() {
+  try { const d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : []; } catch(e) { return []; }
+}
+function saveTransactions(tx) { localStorage.setItem(STORAGE_KEY, JSON.stringify(tx)); }
+function getSettings() {
+  try { const s = localStorage.getItem(SETTINGS_KEY); return s ? JSON.parse(s) : { darkMode: true }; } catch(e) { return { darkMode: true }; }
+}
+function saveSettings(s) { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }
+
+function formatCurrency(n) { return Math.round(n).toLocaleString('ar-EG') + ' ج.م'; }
+
+function formatDate(d) {
+  const date = new Date(d);
+  const months = ['يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+  return date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
+}
+
+function getMonthLabel(d) {
+  const date = new Date(d);
+  const months = ['يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+  return months[date.getMonth()];
+}
+
+function getRelativeTime(d) {
+  const now = new Date();
+  const date = new Date(d);
+  const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return 'اليوم';
+  if (diffDays === 1) return 'أمس';
+  if (diffDays < 7) return 'منذ ' + diffDays + ' أيام';
+  if (diffDays < 30) return 'منذ ' + Math.floor(diffDays / 7) + ' أسابيع';
+  return formatDate(d);
+}
+
+function generateId() { return 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); }
+
+// ========== STATE ==========
+let currentPage = 'dashboard';
+let transactions = [];
+let toastMessage = null;
+let toastTimeout = null;
+let darkMode = true;
+
+function init() {
+  transactions = getTransactions();
+  if (transactions.length === 0) {
+    transactions = [...DEMO_DATA];
+    saveTransactions(transactions);
+  }
+  darkMode = getSettings().darkMode;
+  applyTheme();
+  renderApp();
+}
+
+function applyTheme() {
+  if (darkMode) document.body.classList.remove('light-mode');
+  else document.body.classList.add('light-mode');
+}
+
+function showToast(msg) {
+  toastMessage = msg;
+  renderApp();
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => { toastMessage = null; renderApp(); }, 2500);
+}
+
+function navigateTo(page) { currentPage = page; renderApp(); window.scrollTo(0, 0); }
+
+// ========== BUSINESS LOGIC ==========
+function getStats() {
+  const expenses = transactions.filter(t => t.type === 'expense');
+  const revenues = transactions.filter(t => t.type === 'revenue');
+  const totalExp = expenses.reduce((s, t) => s + t.amount, 0);
+  const totalRev = revenues.reduce((s, t) => s + t.amount, 0);
+  return { totalExp, totalRev, net: totalRev - totalExp, count: transactions.length };
+}
+
+function getInsights() {
+  const expenses = transactions.filter(t => t.type === 'expense');
+  const revenues = transactions.filter(t => t.type === 'revenue');
+  const totalExp = expenses.reduce((s,t) => s + t.amount, 0);
+  const totalRev = revenues.reduce((s,t) => s + t.amount, 0);
+  const aiSpend = expenses.filter(t => ['Claude','ChatGPT','Cursor','Kimi','AI Subscriptions'].includes(t.category)).reduce((s,t) => s + t.amount, 0);
+  const months = new Set(expenses.map(t => getMonthLabel(t.date)));
+  const burnRate = months.size > 0 ? totalExp / months.size : 0;
+  const breakEven = totalExp > 0 ? Math.round((totalRev / totalExp) * 100) : 0;
+  const largestCat = getCategoryData()[0];
+  
+  return [
+    `🤖 AI tools = ${totalExp > 0 ? Math.round((aiSpend / totalExp) * 100) : 0}% من إجمالي المصروفات`,
+    `🔥 <span class="en-term">Burn Rate</span> شهري: ${formatCurrency(burnRate)}`,
+    `🎯 <span class="en-term">Break-even</span>: ${breakEven}%`,
+    largestCat ? `📌 أكبر فئة: "${largestCat.name}" (${formatCurrency(largestCat.value)})` : '',
+  ].filter(Boolean);
+}
+
+function getMonthlyData() {
+  const map = {};
+  transactions.filter(t => t.type === 'expense').forEach(t => {
+    const month = getMonthLabel(t.date);
+    map[month] = (map[month] || 0) + t.amount;
+  });
+  return Object.entries(map).map(([name, amount]) => ({ name, amount }));
+}
+
+function getCategoryData() {
+  const map = {};
+  transactions.filter(t => t.type === 'expense').forEach(t => {
+    map[t.category] = (map[t.category] || 0) + t.amount;
+  });
+  return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a,b) => b.value - a.value);
+}
+
+function addTransaction(data) {
+  const newTx = { ...data, id: generateId(), createdAt: new Date().toISOString() };
+  transactions.unshift(newTx);
+  saveTransactions(transactions);
+  showToast('✅ تم حفظ المعاملة بنجاح');
+  renderApp();
+}
+
+function deleteTransaction(id) {
+  transactions = transactions.filter(t => t.id !== id);
+  saveTransactions(transactions);
+  showToast('🗑 تم حذف المعاملة');
+  renderApp();
+}
+
+function exportData() {
+  const data = { transactions, exportDate: new Date().toISOString(), version: '2.0', currency: 'EGP' };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ms-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('📥 تم تصدير النسخة الاحتياطية');
+}
+
+function importData(jsonData) {
+  if (jsonData.transactions && Array.isArray(jsonData.transactions)) {
+    transactions = jsonData.transactions;
+    saveTransactions(transactions);
+    showToast('📤 تم استعادة البيانات');
+    renderApp();
+  } else { alert('ملف غير صالح'); }
+}
+
+function clearAllData() {
+  if (confirm('⚠️ حذف جميع البيانات؟ لا يمكن التراجع.')) {
+    transactions = [];
+    saveTransactions(transactions);
+    showToast('🗑 تم حذف جميع البيانات');
+    renderApp();
+  }
+}
+
+function loadDemoData() {
+  transactions = [...DEMO_DATA];
+  saveTransactions(transactions);
+  showToast('📦 تم تحميل البيانات التجريبية');
+  renderApp();
+}
+
+function toggleTheme() {
+  darkMode = !darkMode;
+  saveSettings({ darkMode });
+  applyTheme();
+  renderApp();
+}
+
+// ========== RENDER ==========
+function renderHeader() {
+  const pageLabels = {
+    'dashboard': 'Dashboard',
+    'transactions': 'Transactions',
+    'timeline': 'Timeline',
+    'settings': 'Settings'
+  };
+  return `
+    <div class="fixed-header">
+      <div class="header-top">
+        <div class="header-brand">
+          <div class="header-title">Market Systems</div>
+          <div class="header-subtitle">INVESTMENT TRACKER</div>
+        </div>
+        <div class="header-page-label">${pageLabels[currentPage] || ''}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderApp() {
+  const root = document.getElementById('app-root');
+  if (!root) { setTimeout(renderApp, 100); return; }
+  
+  root.innerHTML = `
+    ${renderHeader()}
+    ${renderPage()}
+    ${renderBottomNav()}
+    ${currentPage !== 'settings' ? renderFAB() : ''}
+    ${toastMessage ? `<div class="toast">${toastMessage}</div>` : ''}
+  `;
+  
+  bindEvents();
+}
+
+function renderPage() {
+  switch(currentPage) {
+    case 'dashboard': return renderDashboard();
+    case 'transactions': return renderTransactionsPage();
+    case 'timeline': return renderTimelinePage();
+    case 'settings': return renderSettingsPage();
+    default: return renderDashboard();
+  }
+}
+
+function renderDashboard() {
+  const stats = getStats();
+  const insights = getInsights();
+  const monthlyData = getMonthlyData();
+  const categoryData = getCategoryData();
+  const maxMonthly = Math.max(...monthlyData.map(d => d.amount), 1);
+  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16', '#F97316', '#6366F1'];
+  
+  let barsHTML = '';
+  if (monthlyData.length > 0) {
+    barsHTML = monthlyData.map(d => {
+      const h = Math.max((d.amount / maxMonthly) * 155, 6);
+      return `<div class="bar-wrapper"><div class="bar" style="height:${h}px"></div><div class="bar-label">${d.name}</div></div>`;
+    }).join('');
+  }
+  
+  let legendHTML = '';
+  let totalCat = categoryData.reduce((s, d) => s + d.value, 0);
+  if (categoryData.length > 0 && totalCat > 0) {
+    legendHTML = categoryData.slice(0, 8).map((d, i) => `
+      <div class="legend-item">
+        <div class="legend-dot" style="background:${COLORS[i]}"></div>
+        <span>${d.name} (${Math.round(d.value/totalCat*100)}%)</span>
+      </div>
+    `).join('');
+  }
+  
+  return `
+    <div class="page active" id="page-dashboard">
+      <div class="metrics-grid">
+        <div class="card">
+          <div class="metric-label">📉 إجمالي المصروفات <span class="en-term">Expenses</span></div>
+          <div class="metric-value text-danger">${formatCurrency(stats.totalExp)}</div>
+        </div>
+        <div class="card">
+          <div class="metric-label">📈 إجمالي الإيرادات <span class="en-term">Revenue</span></div>
+          <div class="metric-value text-success">${formatCurrency(stats.totalRev)}</div>
+        </div>
+        <div class="card">
+          <div class="metric-label">💰 صافي الربح <span class="en-term">Net Profit</span></div>
+          <div class="metric-value ${stats.net >= 0 ? 'text-success' : 'text-danger'}">${stats.net >= 0 ? '+' : ''}${formatCurrency(stats.net)}</div>
+        </div>
+        <div class="card">
+          <div class="metric-label">📊 المعاملات <span class="en-term">Tx Count</span></div>
+          <div class="metric-value">${stats.count}</div>
+        </div>
+      </div>
+      
